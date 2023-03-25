@@ -2,10 +2,10 @@ package com.example.seleniumassignment;
 
 public class Assets {
     public static String getUsername(){
-        return "zhu.haot";
+        return "abc";
     }
     public static String getPassword(){
-        return "19980921Zht!";
+        return "123";
     }
 
 }
