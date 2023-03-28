@@ -1,33 +1,25 @@
 package com.example.seleniumassignment;
 
-import java.io.BufferedInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
 public class URLDownloader {
 
-    public static void main(String[] args) {
-        String url = "https://nuflex.northeastern.edu/wp-content/uploads/2020/11/Hybrid_Nuflex_Classroom.pdf#_ga=2.180167276.990139895.1679725768-131279991.1679725763";
+    public static void downloadURL(String urlString, String fileName) throws IOException {
+        URL url = new URL(urlString);
+        try (InputStream inp = url.openStream();
+             BufferedInputStream bis = new BufferedInputStream(inp);
+             FileOutputStream fops = new FileOutputStream(fileName)){
 
-        try {
-            downloadUsingNIO(url, "/Users/haotian/Downloads/downloaded.pdf");
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
+            byte[] d = new byte[1024];
+            int i;
+            while ((i = bis.read(d, 0, 1024)) != -1){
+                fops.write(d, 0, i);
+            }
         }
     }
 
-    public static void downloadUsingNIO(String urlStr, String file) throws IOException {
-        URL url = new URL(urlStr);
-        ReadableByteChannel rbc = Channels.newChannel(url.openStream());
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-        fos.close();
-        rbc.close();
-    }
-
 }
+
