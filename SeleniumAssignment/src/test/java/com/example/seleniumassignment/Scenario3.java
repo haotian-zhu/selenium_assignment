@@ -1,27 +1,33 @@
 package com.example.seleniumassignment;
 
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+import java.io.*;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-public class Scenario3 {
-    public static void execute(WebDriver driver) throws InterruptedException {
-        driver.get("https://service.northeastern.edu/tech?id=classrooms");
-        System.out.println("opened classroom website url");
-        driver.get("https://service.northeastern.edu/tech?id=classroom_details&classroom=9ac92fb397291d905a68bd8c1253afd0");
-        System.out.println("opened specific classroom url");
-        driver.findElement(By.xpath("//*[@id=\"x51d2fa949721d518beddb4221153af23\"]/div/div[2]/span/table[1]/tbody/tr[1]/td[2]/a")).click();
-        String url = driver.getCurrentUrl();
-        try {
-            URLDownloader.downloadUsingNIO(url, "/Users/haotian/Downloads/downloaded.pdf");
-            System.out.println("downloaded from url");
-        } catch (IOException e) {
-            e.printStackTrace();
+public class URLDownloader {
+
+    public static void downloadUsingNIO(String urlStr, String file) throws IOException {
+        URL url = new URL(urlStr);
+        ReadableByteChannel rbc = Channels.newChannel(url.openStream());
+        FileOutputStream fos = new FileOutputStream(file);
+        fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+        fos.close();
+        rbc.close();
+    }
+
+    public static void downloadURL(String urlString, String fileName) throws IOException {
+        URL url = new URL(urlString);
+        try (InputStream inp = url.openStream();
+             BufferedInputStream bis = new BufferedInputStream(inp);
+             FileOutputStream fops = new FileOutputStream(fileName)){
+
+            byte[] d = new byte[1024];
+            int i;
+            while ((i = bis.read(d, 0, 1024)) != -1){
+                fops.write(d, 0, i);
+            }
         }
     }
+
 }
